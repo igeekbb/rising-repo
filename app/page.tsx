@@ -5,7 +5,6 @@ import UpdateTime from '@/components/UpdateTime'
 import dayjs from 'dayjs'
 import RankTable from '@/components/rank/RankTable'
 import getRank from '@/lib/getRank/getRank'
-import Summary from '@/components/Summary'
 interface Props {}
 
 export default async function Page({}: Props) {
@@ -38,7 +37,6 @@ export default async function Page({}: Props) {
       >
         <RankTable data={rank}></RankTable>
       </div>
-      <Summary rank={rank}></Summary>
     </div>
   )
 }

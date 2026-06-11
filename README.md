@@ -4,9 +4,6 @@
 
 ### roadmap
 
-- **v2.0**
-  - add daily summary by chatgpt
-
 - v1.1
   - refactor UI  ✅
   - improve  performance 🚧
