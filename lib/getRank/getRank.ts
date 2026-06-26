@@ -1,4 +1,4 @@
-import { getDate, isWithLocalData, sleep } from '@/lib/util'
+import { getDate, sleep } from '@/lib/util'
 import getRankList, { IRankItem } from '@/lib/getRank/getRankList'
 import getARepo from '@/lib/getRank/getARepo'
 import { getDB } from '@/lib/lowdb'
