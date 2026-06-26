@@ -2,6 +2,7 @@ const { BigQuery } = require('@google-cloud/bigquery')
 
 const serviceKey = process.env.GOOGLE_SERVICE_KEY
 
+/** @type {import('@google-cloud/bigquery').BigQuery | null} */
 let BigqueryClient = null
 
 if (serviceKey) {

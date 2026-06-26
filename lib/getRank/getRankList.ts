@@ -43,7 +43,7 @@ LIMIT ${limit}
       query: query,
       location: 'US',
     }
-    const [job] = await BigqueryClient.createQueryJob(options)
+    const [job] = await BigqueryClient!.createQueryJob(options)
     const [rows] = await job.getQueryResults()
     return rows as IRankItem[]
   } catch (e) {
