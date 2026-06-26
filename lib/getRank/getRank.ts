@@ -14,7 +14,7 @@ export type IRankItemWithRepoInfo = IRankItem & {
 
 export default async function getRank() {
   const db = await getDB()
-  if (isWithLocalData() && db.data.repoInfoList.length) {
+  if (db.data.repoInfoList.length) {
     return db.data.repoInfoList
   }
 
@@ -26,6 +26,10 @@ export default async function getRank() {
     limit: 1000,
     offset: 0,
   })
+
+  if (!rankList.length) {
+    return db.data.repoInfoList
+  }
 
   const repoInfoList: IRankItemWithRepoInfo[] = []
   const batchSize = 80
@@ -56,10 +60,10 @@ export default async function getRank() {
     repoInfoList.push(...batchRepoInfoList)
   }
 
-  if (isWithLocalData()) {
+  if (repoInfoList.length) {
     db.data.repoInfoList = repoInfoList
     await db.write()
   }
 
-  return repoInfoList
+  return repoInfoList.length ? repoInfoList : db.data.repoInfoList
 }
