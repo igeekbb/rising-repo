@@ -2,8 +2,6 @@
 const nextConfig = {
   output: 'export',
 
-  basePath: '/rising-repo',
-
   images: {
     unoptimized: true,
   },
