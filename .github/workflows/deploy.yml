@@ -33,8 +33,11 @@ jobs:
       - name: Install dependencies with yarn
         run: yarn install
 
-      - name: Build with local data
-        run: WITH_LOCAL_DATA=true yarn next build
+      - name: Build with fresh data
+        run: yarn run build-with-fresh-data
+        env:
+          MY_GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
+          GOOGLE_SERVICE_KEY: ${{ secrets.GOOGLE_SERVICE_KEY }}
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
