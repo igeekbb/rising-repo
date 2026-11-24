@@ -1,13 +1,12 @@
-name: Deploy Next.js site to Pages
+name: Update Data and Deploy to Pages
 
 on:
   workflow_dispatch:
-
   schedule:
-    - cron: '0 16 * * *'
+    - cron: '17 15 * * *'
 
 permissions:
-  contents: read
+  contents: write
   pages: write
   id-token: write
 
@@ -26,6 +25,27 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '22'
+
+      - name: Fetch fresh data from BigQuery
+        id: fetch
+        run: node scripts/fetch-data.js
+        env:
+          GOOGLE_SERVICE_KEY: ${{ secrets.GOOGLE_SERVICE_KEY }}
+          MY_GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
+        continue-on-error: true
+
+      - name: Commit and push if data changed
+        if: success() && steps.fetch.outcome == 'success'
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add db.json
+          if git diff --staged --quiet; then
+            echo "No changes"
+          else
+            git commit -m "data: auto-update from BigQuery [skip ci]"
+            git push
+          fi
 
       - name: Install yarn
         run: npm install --global yarn

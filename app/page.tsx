@@ -25,7 +25,7 @@ export default async function Page({}: Props) {
         <div className={clsx('grow')}></div>
         <Link
           target={'_blank'}
-          href={'https://github.com/yanggggjie/rising-repo'}
+          href={'https://github.com/igeekbb/rising-repo'}
         >
           <GithubIcon></GithubIcon>
         </Link>
