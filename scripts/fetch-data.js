@@ -70,25 +70,35 @@ async function main() {
   
   console.log('Querying BigQuery for', dateStr);
   const rankList = await bigQuery(token,
-    `SELECT repo.name AS repoName, COUNT(*) AS addedStars FROM \`githubarchive.day.${dateStr}\` WHERE type = "WatchEvent" GROUP BY repoName ORDER BY addedStars DESC LIMIT 200`
+    `SELECT repo.name AS repoName, COUNT(*) AS addedStars FROM \`githubarchive.day.${dateStr}\` WHERE type = "WatchEvent" GROUP BY repoName ORDER BY addedStars DESC LIMIT 250`
   );
   console.log('Got', rankList.length, 'repos');
 
   const repoInfoList = [];
-  for (let i = 0; i < Math.min(rankList.length, 200); i++) {
+  let skipped = 0;
+  for (let i = 0; i < rankList.length && repoInfoList.length < 200; i++) {
     const item = rankList[i];
     const repo = await getRepo(item.repoName, process.env.MY_GITHUB_TOKEN);
-    repoInfoList.push({
-      repoName: item.repoName, addedStars: item.addedStars,
-      language: repo?.language||null, ownerAvatar: repo?.owner?.avatar_url||'',
-      ownerLogin: repo?.owner?.login||'', description: repo?.description||'',
-      createdAt: repo?.created_at||'', topics: repo?.topics||[]
-    });
+    if (!repo) {
+      skipped++;
+    } else {
+      repoInfoList.push({
+        repoName: item.repoName, addedStars: item.addedStars,
+        language: repo.language||null, ownerAvatar: repo.owner?.avatar_url||'',
+        ownerLogin: repo.owner?.login||'', description: repo.description||'',
+        createdAt: repo.created_at||'', topics: repo.topics||[]
+      });
+    }
     if ((i+1)%30===0) console.log('  GH info',i+1,'/',rankList.length);
     await new Promise(r=>setTimeout(r,120));
   }
 
+  if (repoInfoList.length === 0) {
+    console.error('FATAL: 0 valid repos fetched, aborting overwrite of db.json');
+    process.exit(1);
+  }
+
   fs.writeFileSync('db.json', JSON.stringify({ repoInfoList }, null, 2));
-  console.log('Saved', repoInfoList.length, 'items to db.json');
+  console.log(`Saved ${repoInfoList.length} items to db.json (skipped ${skipped} unavailable)`);
 }
 main().catch(e => { console.log('FATAL:', e.message); process.exit(1); });

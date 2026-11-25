@@ -3,7 +3,7 @@ name: Update Data and Deploy to Pages
 on:
   workflow_dispatch:
   schedule:
-    - cron: '17 15 * * *'
+    - cron: '23 1 * * *'
 
 permissions:
   contents: write
